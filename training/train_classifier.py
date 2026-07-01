@@ -1,4 +1,5 @@
 import argparse
+import inspect
 import os
 from collections import Counter
 from typing import Dict, Optional
@@ -97,18 +98,24 @@ def main():
     # naturally with the Trainer API and keeps the training loop simple in Colab/Kaggle.
     class_weights = compute_class_weights(dataset["train"]["target"])
 
-    training_args = TrainingArguments(
-        output_dir=OUTPUT_DIR,
-        num_train_epochs=args.epochs,
-        per_device_train_batch_size=args.batch_size,
-        per_device_eval_batch_size=args.batch_size,
-        learning_rate=args.learning_rate,
-        evaluation_strategy="epoch",
-        save_strategy="epoch",
-        load_best_model_at_end=True,
-        logging_steps=args.logging_steps,
-        report_to="none",
-    )
+    training_kwargs = {
+        "output_dir": OUTPUT_DIR,
+        "num_train_epochs": args.epochs,
+        "per_device_train_batch_size": args.batch_size,
+        "per_device_eval_batch_size": args.batch_size,
+        "learning_rate": args.learning_rate,
+        "save_strategy": "epoch",
+        "load_best_model_at_end": True,
+        "logging_steps": args.logging_steps,
+        "report_to": "none",
+    }
+    training_signature = inspect.signature(TrainingArguments.__init__)
+    if "evaluation_strategy" in training_signature.parameters:
+        training_kwargs["evaluation_strategy"] = "epoch"
+    else:
+        training_kwargs["eval_strategy"] = "epoch"
+
+    training_args = TrainingArguments(**training_kwargs)
 
     trainer = WeightedTrainer(
         model=model,
