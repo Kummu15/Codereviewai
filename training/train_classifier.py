@@ -95,7 +95,7 @@ def main():
 
     # We use class-weighted cross-entropy loss rather than a sampler because it works
     # naturally with the Trainer API and keeps the training loop simple in Colab/Kaggle.
-    class_weights = compute_class_weights(list(train_dataset["labels"]))
+    class_weights = compute_class_weights(dataset["train"]["target"])
 
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
