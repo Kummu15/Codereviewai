@@ -5,7 +5,7 @@ from collections import Counter
 from typing import Dict, Optional
 
 import torch
-from datasets import load_dataset
+from datasets import load_dataset, Value
 from sklearn.metrics import classification_report
 from transformers import (
     AutoModelForSequenceClassification,
@@ -89,6 +89,7 @@ def main():
 
     tokenized_dataset = dataset.map(tokenize_function(tokenizer, args.max_length), batched=True)
     tokenized_dataset = tokenized_dataset.rename_column("target", "labels")
+    tokenized_dataset = tokenized_dataset.cast_column("labels", Value("int64"))
     tokenized_dataset.set_format("torch", columns=["input_ids", "attention_mask", "labels"])
 
     train_dataset = tokenized_dataset["train"]
