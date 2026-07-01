@@ -117,13 +117,16 @@ def main():
 
     training_args = TrainingArguments(**training_kwargs)
 
+    trainer_signature = inspect.signature(Trainer.__init__)
+    tokenizer_kwarg = "processing_class" if "processing_class" in trainer_signature.parameters else "tokenizer"
+
     trainer = WeightedTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        tokenizer=tokenizer,
         class_weights=class_weights,
+        **{tokenizer_kwarg: tokenizer},
     )
 
     trainer.train()
