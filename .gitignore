@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.venv/
+venv/
+.DS_Store
+training/output/
+*.bin
+*.pt
+*.safetensors
