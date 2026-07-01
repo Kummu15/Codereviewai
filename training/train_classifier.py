@@ -87,6 +87,7 @@ def main():
     inspect_class_balance(dataset)
 
     tokenized_dataset = dataset.map(tokenize_function(tokenizer, args.max_length), batched=True)
+    tokenized_dataset = tokenized_dataset.rename_column("target", "labels")
     tokenized_dataset.set_format("torch", columns=["input_ids", "attention_mask", "labels"])
 
     train_dataset = tokenized_dataset["train"]
